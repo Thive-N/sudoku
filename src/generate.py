@@ -1,6 +1,7 @@
 import random
 import validity
 import utils
+import solver
 
 
 def generatefull() -> list[list[int]]:
@@ -13,10 +14,12 @@ def generatefull() -> list[list[int]]:
 
     for row in range(9):
         for column in range(9):
+            board = solver.solveEasyCases(board)
             if board[row][column] is None:
                 valids = validity.validatposition(board, row, column)
 
                 # if there is a cell with no valid values, the board is invalid so generate a new one
+
                 if len(valids) == 0:
                     return generatefull()
 
@@ -48,5 +51,5 @@ def generatepartial(percentageRemoved: int = 0.8) -> list[list[int]]:
 
 
 if __name__ == "__main__":
-    board = generatepartial(percentageRemoved=0.5)
+    board = generatefull()
     utils.prettyprint(board)
