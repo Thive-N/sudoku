@@ -39,7 +39,7 @@ def generatepartial(percentageRemoved: int = 0.8) -> list[list[int]]:
         list[list[int]]: The generated board.
     """
     board = generatefull()
-    cellsToRemove = int(81 * (1-percentageRemoved))
+    cellsToRemove = max(11, int(81 * (1-percentageRemoved)))
     allcells = [(row, column) for row in range(9) for column in range(9)]
     random.shuffle(allcells)
     allcells = allcells[:cellsToRemove]

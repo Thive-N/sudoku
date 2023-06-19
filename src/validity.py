@@ -114,3 +114,46 @@ def getemptysquares(board: list[list[int]]) -> list[tuple[int, int]]:
             if board[row][column] == None:
                 sqs.append((row, column))
     return sqs
+
+
+def getAffectingSquares(board: list[list[int]], row: int, col: int) -> list[tuple[int, int]]:
+    """Get the squares affected by the given square.
+
+    Args:
+        board (list[list[int]]): The board to check.
+        row (int): The row of the cell to check.
+        col (int): The column of the cell to check.
+
+    Returns:
+        list[tuple[int, int]]: A list of the squares affected by the given square.
+
+    Note:
+        Empty cells are represented by the Nonetype.
+    """
+    affected = []
+    for i in range(9):
+        if i != row:
+            affected.append((i, col))
+        if i != col:
+            affected.append((row, i))
+
+    boxrow = row - row % 3
+    boxcolumn = col - col % 3
+    for i in range(3):
+        for j in range(3):
+            if boxrow+i != row and boxcolumn+j != col:
+                affected.append((boxrow+i, boxcolumn+j))
+
+    return affected
+
+
+def getAffectingSquaresBox(board: list[list[int]], row: int, col: int) -> list[tuple[int, int]]:
+    affected = []
+    boxrow = row - row % 3
+    boxcolumn = col - col % 3
+    for i in range(3):
+        for j in range(3):
+            if boxrow+i != row and boxcolumn+j != col:
+                affected.append((boxrow+i, boxcolumn+j))
+
+    return affected
