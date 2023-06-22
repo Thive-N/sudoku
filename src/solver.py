@@ -43,7 +43,7 @@ def solve(board: list[list[int]]) -> list[list[int]]:
         if len(emptycells) == 0:
             break
 
-        if maxiterations < 200:
+        if maxiterations % 100 == 0:
             solveColorTrap(board)
 
         if previousboard == board:
@@ -53,6 +53,7 @@ def solve(board: list[list[int]]) -> list[list[int]]:
                 board = solveProbabilisticCases(board)
             except:
                 board = copy.deepcopy(savestate)
+                print("reverting to savestate")
 
         previousboard = copy.deepcopy(board)
     return board
@@ -139,14 +140,14 @@ def solveProbabilisticCases(board: list[list[int]]) -> list[list[int]]:
     return board
 
 
-def solveColorTrap(board: list[list[int]], candidate: int = 0) -> list[list[int]]:
+def solveColorTrap(board: list[list[int]], candidate: int = 0):
     """Solve a board using the color wrap algorithm.
 
     Args:
         board (list[list[int]]): The board to solve.
 
     Returns:
-        list[list[int]]: The solved board.
+        Nothing updates the static colormap variable in validity.py 
 
     Note:
         Empty cells are represented by the Nonetype.
@@ -159,8 +160,9 @@ def solveColorTrap(board: list[list[int]], candidate: int = 0) -> list[list[int]
     conjugatepairs = validity.getConjugatePairs(
         board, candidatecells, candidate)
 
-    # if len(conjugatepairs) == 0:
-    #     return solveColorTrap(board, candidate + 1)
+    if len(conjugatepairs) == 0:
+        return solveColorTrap(board, candidate + 1)
+
     networks: list[dict[tuple[int, int], set[tuple[int, int]]]] = []
 
     while len(conjugatepairs) > 0:
@@ -200,27 +202,36 @@ def solveColorTrap(board: list[list[int]], candidate: int = 0) -> list[list[int]
         for candidatecell in candidatecells:
             if candidatecell in colormap:
                 continue
-            else:
-                visf = False
-                vist = True
-                visible = validity.getAffectingSquaresNonComplete(
-                    board, candidatecell[0], candidatecell[1])
-                for cell in visible:
-                    if cell in colormap:
-                        if colormap[cell]:
-                            vist = True
-                        else:
-                            visf = True
 
-                if visf and vist:
-                    if candidatecell in validity.colorvalueremove:
-                        validity.colorvalueremove[candidatecell].add(candidate)
+            visf = False
+            vist = False
+            visible = validity.getAffectingSquaresNonComplete(
+                board, candidatecell[0], candidatecell[1])
+            for cell in visible:
+                if cell in colormap:
+                    if colormap[cell]:
+                        vist = True
                     else:
-                        validity.colorvalueremove[candidatecell] = {candidate}
+                        visf = True
+
+            if visf and vist:
+                if candidatecell in validity.colorvalueremove:
+                    validity.colorvalueremove[candidatecell].add(candidate)
+                else:
+                    validity.colorvalueremove[candidatecell] = {candidate}
 
     solveColorTrap(board, candidate + 1)
 
 
 if __name__ == "__main__":
-    board = generate.generatepartial(percentageRemoved=0.1)
-    utils.prettyprint(solve(board))
+    import time
+    board = generate.generatepartial(percentageRemoved=0.4)
+    print("Original board:")
+    utils.prettyprint(board)
+    print("Solved board:")
+    start = time.time()
+    solved = solve(board)
+    end = time.time()
+    utils.prettyprint(solved)
+    time = (end - start) - 0.2
+    print(f"Time taken: {time}")

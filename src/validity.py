@@ -156,6 +156,17 @@ def getAffectingSquares(board: list[list[int]], row: int, col: int) -> list[tupl
 
 
 def getAffectingSquaresBox(board: list[list[int]], row: int, col: int) -> list[tuple[int, int]]:
+    """Get the squares affected by the given square.
+
+    Args:
+        board (list[list[int]]): The board to check.
+        row (int): The row of the cell to check.
+        col (int): The column of the cell to check.
+
+    Returns:
+        list[tuple[int, int]]: A list of the coordinates of the squares affected by the given square.
+
+    """
     affected = []
     boxrow = row - row % 3
     boxcolumn = col - col % 3
